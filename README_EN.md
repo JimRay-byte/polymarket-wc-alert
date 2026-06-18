@@ -12,7 +12,7 @@ It is read-only:
 
 Chinese documentation is available in [README.md](README.md). The detailed alert algorithm is documented in [docs/ALGORITHM_EN.md](docs/ALGORITHM_EN.md).
 
-## Architecture
+## 1. Architecture
 
 ```text
 Polymarket public APIs
@@ -30,7 +30,7 @@ Windows Client
   Native notifications -> Windows Toast and sound alerts
 ```
 
-## Directory Layout
+## 2. Directory Layout
 
 ```text
 server/
@@ -60,7 +60,7 @@ tests/
   test_connectivity.py     Public Polymarket API connectivity test
 ```
 
-## Server Setup
+## 3. Server Setup
 
 Requirements:
 
@@ -100,7 +100,7 @@ Run in the foreground:
 python main.py --config ./config.yaml
 ```
 
-## systemd Deployment
+## 4. systemd Deployment
 
 Copy and edit the service file:
 
@@ -124,7 +124,7 @@ journalctl -u polymarket-alert -f
 tail -f /opt/polymarket-wc-alert/server/logs/server.log
 ```
 
-## Windows Client
+## 5. Windows Client
 
 Install and run from source:
 
@@ -159,7 +159,7 @@ deploy\build_exe.bat
 
 The output is `dist\PolymarketAlert.exe`. Put `config.json` in the same directory as the exe.
 
-## TLS Recommendation
+## 6. TLS Recommendation
 
 For public deployments, do not expose plain `ws://` directly to the internet. Use one of these patterns:
 
@@ -169,7 +169,7 @@ For public deployments, do not expose plain `ws://` directly to the internet. Us
 
 Client authentication uses `X-Auth-Token` during the WebSocket handshake. Avoid putting tokens in URLs.
 
-## Alert Logic Summary
+## 7. Alert Logic Summary
 
 The detector produces three main values:
 
@@ -206,7 +206,7 @@ Where:
 
 See [docs/ALGORITHM_EN.md](docs/ALGORITHM_EN.md) for details and examples.
 
-## Tests
+## 8. Tests
 
 ```bash
 cd server
@@ -219,13 +219,13 @@ python ../tests/test_connectivity.py
 
 `test_detector.py` and `test_pipeline.py` can run without real credentials. `test_connectivity.py` contacts public Polymarket APIs.
 
-## Security Notes
+## 9. Security Notes
 
 - Use a strong random token.
 - Use `wss://` for public deployments.
 - Keep `server/config.yaml`, `client/config.json`, `.env`, database files, logs, certificates, and private keys out of Git.
 - If a real token is ever pushed to a public repository, rotate it immediately.
 
-## Disclaimer
+## 10. Disclaimer
 
 This project is for market monitoring and notification only. It is not betting, trading, investment, financial, or legal advice. Market data can be delayed, incomplete, or changed by upstream API behavior.

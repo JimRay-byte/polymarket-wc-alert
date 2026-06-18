@@ -204,11 +204,11 @@ deploy\build_exe.bat
 
 ---
 
-## 五·补、连接安全与 TLS 部署（强烈建议公网部署阅读）
+## 六、连接安全与 TLS 部署（强烈建议公网部署阅读）
 
 本系统客户端↔服务端默认是**明文 ws://**。若服务器对公网开放，token 与提醒内容在传输中可被嗅探。请按下述启用 TLS（`wss://`）。
 
-### 5.TLS.1 三种部署场景对照
+### 6.TLS.1 三种部署场景对照
 
 | 场景 | 是否需要 TLS | 推荐做法 |
 |------|------------|---------|
@@ -216,7 +216,7 @@ deploy\build_exe.bat
 | 内网/SSH 隧道访问 | 可选 | 用 SSH 端口转发，token 不出公网 |
 | **公网开放（推荐做法）** | **是** | 申请域名 + Let's Encrypt 证书，启用 `wss://` |
 
-### 5.TLS.2 申请免费 TLS 证书（Let's Encrypt / Certbot）
+### 6.TLS.2 申请免费 TLS 证书（Let's Encrypt / Certbot）
 
 **前提**：你有一个域名（如 `alert.example.com`）已解析到服务器公网 IP。
 
@@ -243,7 +243,7 @@ sudo chown -R root:ubuntu /etc/letsencrypt/live/ /etc/letsencrypt/archive/
 sudo chmod -R 750 /etc/letsencrypt/live/ /etc/letsencrypt/archive/
 ```
 
-### 5.TLS.3 在 config.yaml 启用 TLS
+### 6.TLS.3 在 config.yaml 启用 TLS
 
 ```yaml
 server:
@@ -266,7 +266,7 @@ journalctl -u polymarket-alert -f
 sudo ufw allow 8765/tcp
 ```
 
-### 5.TLS.4 Windows 客户端连接 wss
+### 6.TLS.4 Windows 客户端连接 wss
 
 编辑 `client/config.json`：
 ```json
@@ -280,7 +280,7 @@ sudo ufw allow 8765/tcp
 ```
 > `insecure_skip_verify` 仅在你用**自签证书**测试时才设 `true`；Let's Encrypt 等受信证书务必保持 `false`。
 
-### 5.TLS.5 证书自动续期
+### 6.TLS.5 证书自动续期
 
 Let's Encrypt 证书 90 天过期。加一条 cron 自动续期 + 重启服务：
 ```bash
@@ -290,7 +290,7 @@ sudo crontab -e
 ```
 也可用 systemd timer，效果相同。
 
-### 5.TLS.6 没有域名怎么办（自签证书，仅自测）
+### 6.TLS.6 没有域名怎么办（自签证书，仅自测）
 
 ```bash
 # 生成自签证书（IP 直连用，浏览器/客户端会提示不受信）
@@ -303,7 +303,7 @@ config.yaml 照填路径，客户端 `config.json` 设 `"insecure_skip_verify": 
 
 ---
 
-### 5.SEC 安全机制总览（已实现）
+### 6.SEC 安全机制总览（已实现）
 
 | 威胁 | 防护措施 | 代码位置 |
 |------|---------|---------|
@@ -319,7 +319,7 @@ config.yaml 照填路径，客户端 `config.json` 设 `"insecure_skip_verify": 
 
 ---
 
-## 六、测试方案
+## 七、测试方案
 
 ```bash
 cd server && source ../venv/bin/activate
@@ -339,7 +339,7 @@ python ../tests/test_connectivity.py
 
 ---
 
-## 七、风险与限制
+## 八、风险与限制
 
 1. **数据延迟**：官方 WS 推送存在网络与服务端处理延迟，提醒非“零延迟”。
 2. **接口变更**：Polymarket 官方接口字段/地址可能调整；本系统已把数据源
@@ -352,7 +352,7 @@ python ../tests/test_connectivity.py
 
 ---
 
-## 八、数据源参考（公开官方）
+## 九、数据源参考（公开官方）
 
 - Polymarket API 文档：https://docs-polymarket-us.mintlify.app/
 - Gamma API（市场发现）：`https://gamma-api.polymarket.com`
