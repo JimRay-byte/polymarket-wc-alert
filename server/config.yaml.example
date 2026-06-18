@@ -1,0 +1,188 @@
+# ===========================================================================
+# Polymarket 世界杯冷门大额下注实时监测系统 - 配置示例
+# ---------------------------------------------------------------------------
+# 使用方法：
+#   1. 复制本文件为 config.yaml：  cp config.yaml.example config.yaml
+#   2. 只需改一处：把下面 server.auth_token 改成你自己定的随机字符串
+#      （生成命令：openssl rand -hex 24）
+#   3. Windows 客户端的 config.json 里 token 要填【同一个】值
+#   4. 其余字段都已是合理默认值，无需改动即可运行
+#
+# 敏感字段（token、SMTP 密码）也可用环境变量覆盖，例如：
+#   POLYALERT_SERVER__AUTH_TOKEN=xxxx
+# ===========================================================================
+
+# Polymarket 公开接口地址（只读，无需认证）。仅在官方变更域名时修改。
+polymarket:
+  gamma_api_base: "https://gamma-api.polymarket.com"
+  clob_api_base: "https://clob.polymarket.com"
+  ws_market_url: "wss://ws-subscriptions-clob.polymarket.com/ws/market"
+  ws_trades_url: "wss://ws-subscriptions-clob.polymarket.com/ws/activity"
+
+# 市场发现配置
+discovery:
+  # 命中任意关键词即视为候选世界杯市场（不区分大小写）
+  # 这里覆盖了 Polymarket 上常见的所有世界杯市场标题写法
+  keywords:
+    # —— 赛事总称 ——
+    - "FIFA World Cup"
+    - "World Cup"
+    - "World Cup 2026"
+    - "2026 World Cup"
+    - "世界杯"
+    # —— 赛事阶段关键词（小组赛 / 淘汰赛 / 冠军 等）——
+    - "World Cup Winner"
+    - "Golden Boot"
+    - "Golden Ball"
+    - "Knockout Stages"
+    - "Group Stage"
+    - "advance to the knockout"
+    - "Group A"
+    - "Group B"
+    - "Group C"
+    - "Group D"
+    - "Group E"
+    - "Group F"
+    - "Group G"
+    - "Group H"
+    - "Group I"
+    - "Group J"
+    - "Group K"
+    - "Group L"
+
+  # 出现任意球队名也命中（按需补充）。下面是 2026 世界杯全部 48 支参赛队，
+  # 数据来源：FIFA 官网 teams 页（已含三种写法：英文全称 / FIFA 简码 / 中文），
+  # 这样无论 Polymarket 标题用哪种写法都能命中。
+  team_whitelist:
+    # —— 东道主（CONCACAF）——
+    - "USA"
+    - "United States"
+    - "Canada"
+    - "Mexico"
+    # —— 南美（CONMEBOL）——
+    - "Argentina"
+    - "Brazil"
+    - "Colombia"
+    - "Ecuador"
+    - "Paraguay"
+    - "Uruguay"
+    # —— 欧洲（UEFA）16 队 ——
+    - "England"
+    - "France"
+    - "Germany"
+    - "Spain"
+    - "Portugal"
+    - "Netherlands"
+    - "Belgium"
+    - "Croatia"
+    - "Switzerland"
+    - "Austria"
+    - "Norway"
+    - "Scotland"
+    - "Türkiye"
+    - "Turkey"              # Polymarket 部分市场用 Turkey
+    - "Czechia"
+    - "Czech Republic"      # 部分市场旧写法
+    - "Bosnia and Herzegovina"
+    - "Bosnia"              # 简写
+    - "Sweden"
+    # —— 亚洲（AFC）8 队 ——
+    - "Japan"
+    - "South Korea"
+    - "Korea Republic"
+    - "Iran"
+    - "IR Iran"
+    - "Australia"
+    - "Saudi Arabia"
+    - "KSA"                 # Saudi Arabia 的 FIFA 简码
+    - "Qatar"
+    - "Iraq"
+    - "Jordan"
+    - "Uzbekistan"
+    # —— 非洲（CAF）9 队 ——
+    - "Morocco"
+    - "Senegal"
+    - "Egypt"
+    - "Tunisia"
+    - "Algeria"
+    - "Côte d'Ivoire"
+    - "Ivory Coast"         # Côte d'Ivoire 的英文别称
+    - "South Africa"
+    - "Cape Verde"
+    - "Cabo Verde"          # Cape Verde 的 FIFA 官方名
+    - "DR Congo"
+    - "Congo DR"            # FIFA 简码写法
+    # —— 中北美（CONCACAF，除东道主外）——
+    - "Panama"
+    - "Haiti"
+    # —— 大洋洲（OFC）——
+    - "New Zealand"
+
+  # 命中即排除（降噪）。这些词若出现在世界杯市场标题里通常不是真正的足球市场
+  exclude_keywords:
+    - "stock"
+    - "index"
+    - "crypto"
+    - "bitcoin"
+    - "ethereum"
+
+  # Gamma 市场列表刷新间隔（秒）。该接口较重，建议 >= 300
+  refresh_interval_sec: 600
+  # 仅保留流动性 >= 该值的市场（美元），过滤极薄盘口噪声
+  min_liquidity_usd: 500.0
+  # 同时监测的最大市场数
+  max_markets: 240
+
+# 冷门 & 大额判断阈值 —— 用户可按需调整
+detector:
+  large_trade_usd: 5000.0       # 普通提醒阈值
+  important_trade_usd: 20000.0  # 重要提醒阈值
+  severe_trade_usd: 100000.0    # 严重提醒阈值
+
+  underdog_score_threshold: 70.0
+  underdog_max_implied_prob: 0.35
+
+  short_window_sec: 300         # 5 分钟短窗口
+  price_spike_ratio: 0.05       # 短窗口涨幅 >= 5% 视为异动
+  volume_anomaly_multiplier: 5.0
+  min_book_depth_usd: 500.0     # 盘口深度不足则忽略，避免假信号
+  short_window_large_usd: 5000.0
+
+# 服务器对外 WebSocket 推送服务
+server:
+  host: "0.0.0.0"
+  port: 8765
+  # ★★★ 你只需要改这一处 ★★★
+  # 改成一个只有你知道的强随机字符串（至少 16 字符），Windows 客户端要填一样的。
+  # 生成：openssl rand -hex 24
+  # 注意：token 通过请求头 X-Auth-Token 传输，不会出现在 URL 里。
+  auth_token: "change-me-please"
+  ping_interval_sec: 20
+  # --- TLS（强烈建议公网部署时启用，客户端用 wss:// 连接）---
+  # 同时填 cert 与 key 则启用 wss://；留空则用明文 ws://
+  # 申请方式见 README "TLS 证书部署" 一节（推荐 Let's Encrypt 免费证书）
+  ssl_cert: ""   # 如 /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+  ssl_key: ""    # 如 /etc/letsencrypt/live/yourdomain.com/privkey.pem
+  # 单 IP 最大并发客户端连接数（抗 DoS）
+  max_clients_per_ip: 8
+
+# 可选二级通知（默认全关，主要目标是 Windows 客户端）
+secondary:
+  enable_telegram: false
+  telegram_bot_token: ""
+  telegram_chat_id: ""
+
+  enable_email: false
+  email_smtp_host: ""
+  email_smtp_port: 465
+  email_username: ""
+  email_password: ""
+  email_from: ""
+  email_to: ""
+
+# SQLite 数据库路径（持久化提醒）
+db_path: "data/alerts.db"
+
+# 日志
+log_level: "INFO"     # DEBUG / INFO / WARNING / ERROR
+log_dir: "logs"

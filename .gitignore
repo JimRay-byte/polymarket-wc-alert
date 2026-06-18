@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+build-venv/
+
+# Local configuration and secrets
+server/config.yaml
+client/config.json
+.env
+.env.*
+*.pem
+*.key
+*.crt
+
+# Runtime data
+data/
+server/data/
+logs/
+server/logs/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Build artifacts
+build/
+dist/
+*.spec
+*.zip
+*.7z
+*.tar
+*.tar.gz
+windows-client-release/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

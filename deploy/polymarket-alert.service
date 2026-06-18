@@ -1,0 +1,31 @@
+[Unit]
+Description=Polymarket World Cup Underdog Alert Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# !!! 修改为你的实际路径和用户 !!!
+User=ubuntu
+WorkingDirectory=/opt/polymarket-wc-alert/server
+# 配置文件路径可通过环境变量指定
+Environment=POLYALERT_CONFIG=/opt/polymarket-wc-alert/server/config.yaml
+# 敏感字段用环境变量注入（推荐），例如：
+# Environment=POLYALERT_SERVER__AUTH_TOKEN=your-strong-token-here
+ExecStart=/opt/polymarket-wc-alert/venv/bin/python /opt/polymarket-wc-alert/server/main.py --config /opt/polymarket-wc-alert/server/config.yaml
+
+Restart=always
+RestartSec=5
+# 资源/安全限制
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/polymarket-wc-alert/server/data /opt/polymarket-wc-alert/server/logs
+
+# 日志
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=polyalert
+
+[Install]
+WantedBy=multi-user.target

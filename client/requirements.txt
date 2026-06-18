@@ -1,0 +1,15 @@
+# Windows 客户端依赖（Python 3.11+）
+websockets>=12.0
+# Windows 原生 Toast 通知，失败时再降级到 plyer/win10toast
+winotify>=1.1
+# 桌面通知降级方案
+plyer>=2.1
+# 系统托盘
+pystray>=0.19
+Pillow>=10.0
+# 备用 Toast
+win10toast>=0.9
+# 注册 AppUserModelID / 开始菜单快捷方式，让单文件 exe 的 Windows Toast 更稳定
+pywin32>=306
+# WSS 证书校验根证书包，避免 PyInstaller exe 找不到系统 CA
+certifi>=2024.0

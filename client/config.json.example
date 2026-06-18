@@ -1,0 +1,9 @@
+{
+  "_说明": "本地测试可用 ws://127.0.0.1:8765；公网部署建议使用 wss://your-domain.example。token 会在连接握手时通过请求头传输。",
+  "server_url": "ws://127.0.0.1:8765",
+  "token": "replace-with-generated-token",
+  "sound_enabled": true,
+  "popup_enabled": true,
+  "minimize_to_tray": true,
+  "insecure_skip_verify": false
+}
